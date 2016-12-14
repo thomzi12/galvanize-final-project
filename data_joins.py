@@ -1,30 +1,26 @@
 import pandas as pd
-import os
 import numpy as np
-from fuzzywuzzy import process # Will likely need to pip install if you haven't already
+from fuzzywuzzy import process
 from collections import defaultdict
 
 
 def grab_pair_assignment_data():
+    '''
+    OUTPUT: Pandas dataframe where each row is pair programming pair
+    '''
     return pd.read_csv('../repo-name.csv')
 
 
 def grab_length_data(directory):
-
-    
     '''
-    INPUT: Current working directory
-    OUTPUT: Dataframe consisting of all csv files in directory, concatenated together
+    OUTPUT: Pandas Dataframe of scraped Github files and respective lengths
     '''
-    # Could be rewritten to be generalizable -- not at the moment
-    df = pd.read_csv('pair_programming_data1.csv', index_col=0)
-    for filename in os.listdir(directory):
-        if filename != 'pair_programming_data1.csv' and filename.endswith('csv'):
-            df = pd.concat([df, pd.read_csv(filename, index_col=0)])
-    return df
-
+    return pd.read_csv('../scraped_github_data.csv')
 
 def grab_final_data():
+    '''
+    OUTPUT: Pandas Dataframe of assessment and experience data for each student
+    '''
     return pd.read_excel('../../galvanize_data.xlsx')
 
 
@@ -67,8 +63,8 @@ def _get_name_dict(df):
 
 def change_name_to_ghu(df1, df2):
     '''
-    INPUT: Dataframe (df1) that has columns of names and github usernames, Dataframe (df2) of
-    name data that needs to be converted
+    INPUT: Dataframe (df1) that has columns of names and github usernames,
+    Dataframe (df2) of name data that needs to be converted
     OUTPUT: Modified df2 with names changed to github usernames
     '''
     name_dict = _get_name_dict(df1)
@@ -132,8 +128,9 @@ def _isNotNan(obj):
 
 def fill_lengths(pairdf, pair_lengthdf, final_df):
     '''
-    INPUT: pairdf: dataframe with pair assignments for a given repo and cohort, pair_lengthdf: dataframe with scraped
-    data from Github featuring the length of pair assignments, finaldf: dataframe with students as rows
+    INPUT: pairdf: dataframe with pair assignments for a given repo and cohort,
+    pair_lengthdf: dataframe with scraped data from Github featuring the length
+    of pair assignments, finaldf: dataframe with students as rows
     OUTPUT: modified finaldf with pair assignment lengths filled in
     '''
     for row in pairdf.iterrows():
@@ -148,9 +145,12 @@ def fill_lengths(pairdf, pair_lengthdf, final_df):
         else:
             filler(final_df, repo, name1, name2)
             filler(final_df, repo, name2, name1)
-    # I don't think that I'll need to return anything here
+
 
 def write_to_csv(df):
+    '''
+    INPUT: Dataframe to be written to file
+    '''
     df.to_csv('../final_sheet.csv')
 
 
